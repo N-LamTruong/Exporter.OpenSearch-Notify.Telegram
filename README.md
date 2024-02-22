@@ -1,7 +1,7 @@
 # Dashboard OpenSearch + Notify Telegram
 ## Yêu cầu
 1. Setup stack Prometheus + Grafana trên server LAB Monitor
-2. Setup OpenSearch Exporter + Node Exporter trên hệ thống LAB siem-lab.usec.vn (soc_lab_wazuh_ao1)
+2. Setup OpenSearch Exporter + Node Exporter trên hệ thống LAB siem (soc_lab_wazuh_ao1)
 3. Setup AlertManager notify Telegram: Hardware + healthcheck Opensearch
 ## Mô hình
 ![Mo hinh](/Picture/Mo%20hinh.png)
@@ -13,16 +13,16 @@
     
     Grafana [here](https://dl.grafana.com/enterprise/release/grafana-enterprise_9.4.7_amd64.deb)
 
-    Node-Exporter [here](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/Node-Exporter/docker-compose.yml)
+    Node-Exporter [here](/Node-Exporter/docker-compose.yml)
 
 - Cấu hình và khởi động dịch vụ:
 
-    [Prometheus as a service](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/Prometheus/prometheus.service) **(Lưu ý tạo file log và phân quyền trước khi start service)**. Di chuyển folder prometheus vừa unzip bước trên vào **/usr/local/bin**. Chuyển file **prometheus.yml** ra folder mới để tiện config [/etc/prometheus/prometheus.yml](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/Prometheus/prometheus.yml). Đồng thời thêm các [alert rules](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/tree/main/Prometheus/alert) vào cùng folder đó.
+    [Prometheus as a service](/Prometheus/prometheus.service) **(Lưu ý tạo file log và phân quyền trước khi start service)**. Di chuyển folder prometheus vừa unzip bước trên vào **/usr/local/bin**. Chuyển file **prometheus.yml** ra folder mới để tiện config [/etc/prometheus/prometheus.yml](/Prometheus/prometheus.yml). Đồng thời thêm các [alert rules](/Prometheus/alert/) vào cùng folder đó.
 
     Sau khi khởi chạy node-exporter và prometheus thì vào web Grafana add data source prometheus. Sau đó import ID dashboard node-exporter 11074 để check hardware server.
 
 ### 2. Setup OpenSearch Exporter (soc_lab_wazuh_ao1)
-- Tạo folder **exporter** rồi tạo file [docker-compose.yml](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/Opensearch-Exporter/docker-compose.yml) để chạy exporter gồm 2 service **opensearch-exporter** và **node-exporter**.
+- Tạo folder **exporter** rồi tạo file [docker-compose.yml](/Opensearch-Exporter/docker-compose.yml) để chạy exporter gồm 2 service **opensearch-exporter** và **node-exporter**.
 
 ### 3. Setup AlertManager notify Telegram
 - **Telegram Bot**
@@ -31,26 +31,26 @@
 
     Tạo folder cho service **telegram_bot** gồm 2 phần:
 
-    - File [docker-compose.yml](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/Telegram%20Bot/docker-compose.yml)
+    - File [docker-compose.yml](/Telegram%20Bot/docker-compose.yml)
     
-    - Folder con tên [telegrambot](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/tree/main/Telegram%20Bot/telegrambot) chứa 2 file: config + template.
+    - Folder con tên [telegrambot](/Telegram%20Bot/telegrambot/) chứa 2 file: config + template.
 
 - **AlertManager**
 
     Download và unzip: AlertManager [here](https://github.com/prometheus/alertmanager/releases/download/v0.25.0/alertmanager-0.25.0.linux-amd64.tar.gz)
 
-    [AlertManager as a service](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/AlertManager/alertmanager.service) **(Lưu ý tạo file log và phân quyền trước khi start service)**. Di chuyển folder **alertmanager** vừa unzip bước trên vào **/usr/local/bin**. Chuyển file **alertmanager.yml** ra folder mới để tiện config [/etc/alertmanager/alertmanager.yml](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/AlertManager/alertmanager.yml) (lưu ý trong **url webhook_configs** sửa **chat id** đã lấy được từ bước tạo telegram bot).
+    [AlertManager as a service](/AlertManager/alertmanager.service) **(Lưu ý tạo file log và phân quyền trước khi start service)**. Di chuyển folder **alertmanager** vừa unzip bước trên vào **/usr/local/bin**. Chuyển file **alertmanager.yml** ra folder mới để tiện config [/etc/alertmanager/alertmanager.yml](/AlertManager/alertmanager.yml) (lưu ý trong **url webhook_configs** sửa **chat id** đã lấy được từ bước tạo telegram bot).
 
-- Sau khi khởi động xong 2 dịch vụ trên chúng ta sẽ lên web Grafana rồi import [template](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/blob/main/Dashboard%20Template/Opensearch-overview.json) để hiển thị **Dashboard OpenSearch**
+- Sau khi khởi động xong 2 dịch vụ trên chúng ta sẽ lên web Grafana rồi import [template](/Dashboard%20Template/Opensearch-overview.json) để hiển thị **Dashboard OpenSearch**
 
 ## Kết quả
 - **Dashboard Opensearch**
 
-![Dashboard Opensearch](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/raw/main/Picture/Opensearch%20Dashboard.png)
+![Dashboard Opensearch](/Picture/Opensearch%20Dashboard.png)
 
 - **Nofify Telegram**
 
-![Bot Telegram Notify](https://gitlab.vsec.vn/lamtruong/dashboard-opensearch-alertmanager-telegram/-/raw/main/Picture/Notify%20Telegram%20Bot.png)
+![Bot Telegram Notify](/Picture/Notify%20Telegram%20Bot.png)
 
 - **Các thông số cảnh báo về Telegram**:
     
