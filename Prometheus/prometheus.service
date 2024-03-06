@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus Server
+After=network-online.target
+
+[Service]
+User=root
+Restart=on-failure
+
+StandardOutput=file:/var/log/prometheus/prometheus.log
+ExecStart=sudo ./usr/local/bin/prometheus/prometheus --config.file=/etc/prometheus/prometheus.yml
+
+[Install]
+WantedBy=multi-user.target
