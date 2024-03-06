@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+
+  opensearch_exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:latest
+    container_name: opensearch-exporter
+    restart: always
+    command:
+      - '--es.uri=https://admin:Hell0vs3c-2023@192.168.1.24:9200'
+      - '--es.ssl-skip-verify'
+      - '--es.timeout=5m'
+    ports:
+      - 9114:9114
