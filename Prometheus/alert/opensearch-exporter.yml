@@ -1,0 +1,89 @@
+groups:
+  - name: OpenSearch-Alerts
+    rules:
+    - alert: "Missing node in OpenSearch cluster"
+      expr: elasticsearch_cluster_health_number_of_nodes < 3
+      for: 2m
+      annotations:
+        description: "There are only {{ $value }} < 3 OpenSearch nodes running"
+      labels:
+        severity: critical
+        notify: telegram
+
+    - alert: "Missing data node in Opensearch cluster"
+      expr: elasticsearch_cluster_health_number_of_data_nodes < 3
+      for: 2m
+      labels:
+        severity: critical
+        notify: telegram
+      annotations:
+        summary: OpenSearch Healthy Data Nodes (instance {{ $labels.instance }})
+        description: "Missing data node in OpenSearch cluster\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: "Opensearch Heap Too High"
+      expr: elasticsearch_heap_utilization_percentage > 90
+      for: 5m
+      annotations:
+        description: The heap usage is over 90%
+        summary: "OpenSearch node {{ $labels.name }} heap usage is high"
+      labels:
+        severity: critical
+        notify: telegram
+
+    - alert: "OpenSearch Cluster RED"
+      expr: elasticsearch_red_cluster_status
+      for: 2m
+      annotations:
+        message: "Cluster {{ $labels.cluster }} health status has been RED. Cluster does not accept writes, shards may be missing or master node hasn't been elected yet."
+      labels:
+        severity: critical
+        notify: telegram
+
+    - alert: "OpenSearch Cluster YELLOW"
+      expr: elasticsearch_yellow_cluster_status
+      for: 5m
+      annotations:
+        message: "Cluster {{ $labels.cluster }} health status has been YELLOW. Some shard replicas are not allocated."
+      labels:
+        severity: warning
+        notify: telegram
+
+    - alert: "OpenSearch Unassigned Shards"
+      expr: elasticsearch_cluster_health_unassigned_shards > 0
+      for: 1m
+      labels:
+        severity: critical
+        notify: telegram
+      annotations:
+        summary: OpenSearch unassigned shards (instance {{ $labels.instance }})
+        description: "OpenSearch has unassigned shards\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: "OpenSearch Pending Tasks"
+      expr: elasticsearch_cluster_health_number_of_pending_tasks > 0
+      for: 5m
+      labels:
+        severity: warning
+        notify: telegram
+      annotations:
+        summary: OpenSearch pending tasks (instance {{ $labels.instance }})
+        description: "OpenSearch has pending tasks. Cluster works slowly.\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+
+    - alert: "OpenSearch JVM Heap Use High"
+      expr: elasticsearch_heap_utilization_percentage > 85
+      for: 5m
+      annotations:
+        message: "JVM Heap usage on the node {{ $labels.node }} in {{ $labels.cluster }} cluster is {{ $value }}%."
+        summary: JVM Heap usage on the node is high
+      labels:
+        severity: critical
+        notify: telegram
+
+    - alert: "OpenSearch Process CPU High"
+      expr: elasticsearch_process_cpu_high > 90
+      for: 1m
+      annotations:
+        message: "Process CPU usage on the node {{ $labels.node }} in {{ $labels.cluster }} cluster is {{ $value }}%"
+        summary: Process CPU usage is high
+      labels:
+        severity: critical
+        notify: telegram
