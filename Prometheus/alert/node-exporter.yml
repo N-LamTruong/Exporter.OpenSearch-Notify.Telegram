@@ -1,0 +1,65 @@
+groups:
+  - name: HardwareRules
+    rules:
+      - alert: "RAM > 85%"
+        expr: round((100 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100)), 0.01) > 85
+        for: 2m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "VALUE = {{ $value }}\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}"
+
+      - alert: "NetworkIn > 100 MB/s"
+        expr: round((sum by (instance) (rate(node_network_receive_bytes_total[2m])) / 1024 / 1024), 0.01) > 100
+        for: 5m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "Host unusual network throughput in\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}\n VALUE = {{ $value }}\n interface: {{ $labels.device }}"
+
+      - alert: "NetworkOut > 100 MB/s"
+        expr: round((sum by (instance) (rate(node_network_transmit_bytes_total[2m])) / 1024 / 1024), 0.01) > 100
+        for: 5m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "Host unusual network throughput out\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}\n VALUE = {{ $value }}\n interface: {{ $labels.device }}"
+
+      - alert: "DiskReadRate > 50 MB/s"
+        expr: round((sum by (instance) (rate(node_disk_read_bytes_total[2m])) / 1024 / 1024), 0.01) > 50
+        for: 5m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "Disk read rate\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}\n VALUE = {{ $value }}\n device: {{ $labels.device }}"
+
+      - alert: "DiskWriteRate > 50 MB/s"
+        expr: round((sum by (instance) (rate(node_disk_written_bytes_total[2m])) / 1024 / 1024), 0.01) > 50
+        for: 5m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "Disk write rate\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}\n VALUE = {{ $value }}\n device: {{ $labels.device }}"
+
+      - alert: "DiskSpace > 85%"
+        expr: round((100 - (node_filesystem_avail_bytes{mountpoint="/" } * 100) / node_filesystem_size_bytes{mountpoint="/" }), 0.01) > 85 and ON(instance, device, mountpoint) node_filesystem_readonly == 0
+        for: 2m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "Host out of disk space\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}, VALUE = {{ $value }}, mountpoint: {{ $labels.mountpoint }}."
+
+      - alert: "CpuLoad > 85%"
+        expr: round((100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100)), 0.01) > 85
+        for: 2m
+        labels:
+          severity: warning
+          notify: telegram
+        annotations:
+          description: "CPU load is > 85%\n server: {{ $labels.server }}\n ip: {{ $labels.ip }}\n VALUE = {{ $value }}"
