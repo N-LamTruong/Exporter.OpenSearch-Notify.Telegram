@@ -7,7 +7,6 @@ User=root
 Restart=on-failure
 
 StandardOutput=file:/var/log/alertmanager/alertmanager.log
-
 ExecStart=/usr/local/bin/alertmanager/alertmanager --config.file=/etc/alertmanager/alertmanager.yml
 
 [Install]
