@@ -1,0 +1,14 @@
+[Unit]
+Description=AlertManager Service
+After=network-online.target
+
+[Service]
+User=root
+Restart=on-failure
+
+StandardOutput=file:/var/log/alertmanager/alertmanager.log
+
+ExecStart=/usr/local/bin/alertmanager/alertmanager --config.file=/etc/alertmanager/alertmanager.yml
+
+[Install]
+WantedBy=multi-user.target
