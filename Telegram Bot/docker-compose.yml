@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  prometheus-bot:
+    container_name: telegrambot
+    image: tienbm90/prometheus-bot:0.0.1
+    volumes:
+      - ./telegrambot/:/etc/telegrambot/
+      - ./telegrambot/config.yaml:/config.yaml
+    ports:
+      - 9087:9087
+    restart: always
